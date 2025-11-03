@@ -6,7 +6,6 @@ int main() {
     int dia = 0; 
 	int mes = 0;
 	int year = 0;
-    
 
     cout << "Ingrese el dia a validar (1-31): ";
     cin >> dia;

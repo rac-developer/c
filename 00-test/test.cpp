@@ -1,17 +1,31 @@
 #include <iostream>
-#include <conio.h>
 
 using namespace std;
 
 int main () {
-	
-	// float puede tener cierta cantidad de numero con comas
-	float num = 2.573;
-	float num2 = 3.456;
+
+	struct Hogar {
+		int personas;
+		int numerotel;
 		
-	cout << num+num2 << endl;
+		// Esto pone valores por defecto
+		Hogar() {personas = 1; numerotel = 2;}
+		
+		int verPer () {return personas;}
+		int savedPeople (int a) {personas = a;}
+		
+	} Castro, Mejias, Velasquez;
+	Castro.personas = 4;
+	Mejias.numerotel = 3;
 	
-	// Para que no se cierre el programa
-	getch();
+	Castro = Mejias;
+	
+	cout << Castro.numerotel << endl;
+	cout << Mejias.personas << endl;
+	cout << Velasquez.personas << endl;
+	
+	Velasquez.savedPeople(4);
+	cout << Velasquez.verPer() << endl;
+	
 	return 0;
 }
