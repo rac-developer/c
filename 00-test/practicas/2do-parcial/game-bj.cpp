@@ -54,12 +54,23 @@ int main() {
     cout << "Bienvenido al Bj de la USM!" << endl;
     cout << "Ingresa tu saldo inicial para jugar: $";
     cin >> saldoJugador;
+    
+    bool jugadorSeRetiro = false;
 
     // 2. Bucle principal del juego (mientras tenga dinero)
     while (saldoJugador > 0) {
         
         cout << "\n--------------------------" << endl;
         cout << "\nNueva Ronda. Tu saldo es: $" << saldoJugador << endl;
+         cout << "Deseas seguir jugando (J) o retirarte (R)?: ";
+        
+        char decisionRetiro = ' ';
+        cin >> decisionRetiro;
+
+        if (decisionRetiro == 'R' || decisionRetiro == 'r') {
+            jugadorSeRetiro = true; // Marcamos que se retiró
+            break; // Salimos del bucle while
+        }
         
         // 3. Preguntar la apuesta
         int apuesta = 0;
@@ -133,35 +144,67 @@ int main() {
         }
 
         // 6. Turno del Jugador
-        
         char decision = ' ';
+        
+        // Creamos una variable para saber si es el primer turno
+        // (Es true si todavía no has pedido ninguna carta extra)
+        bool esPrimerTurno = true; 
+
         while (puntajeJugador < 17 && !jugadorSePaso) {
-            cout << "Deseas pedir (P) o plantarte (T)?: ";
+            cout << "\nTu puntaje es " << puntajeJugador << "." << endl;
+            
+            // Mostramos la opción de Doblar (D) SOLO si es el primer turno
+            // y si tienes suficiente saldo para duplicar la apuesta.
+            if (esPrimerTurno && saldoJugador >= (apuesta * 2)) {
+                cout << "Deseas pedir (P), plantarte (T) o doblar (D)?: ";
+            } else {
+                cout << "Deseas pedir (P) o plantarte (T)?: ";
+            }
             cin >> decision;
 
-            if (decision == 'P' || decision == 'p') {
-                // Pedir carta
-                cout << "Pides carta: ";
-                int nuevaCarta = obtenerCarta();
-                if (nuevaCarta == 11) asesJugador++;
-                
-                puntajeJugador += nuevaCarta;
-                cout << "\nTu nuevo puntaje: " << puntajeJugador << endl;
-
-                // Revisar si se pasó (y ajustar por Ases)
-                if (puntajeJugador > 21) {
-                    puntajeJugador = ajustarPorAs(puntajeJugador, asesJugador);
-
-                    // Si después de ajustar sigue > 21, se pasó
+            if (decision == 'D' || decision == 'd') {
+                // --- LÓGICA DE DOBLAR ---
+                // Solo permitimos doblar si es el primer turno y tiene saldo
+                if (esPrimerTurno && saldoJugador >= (apuesta * 2)) {
+                    apuesta = apuesta * 2; // Duplicamos la apuesta
+                    cout << "\nDOBLAS! Tu apuesta ahora es $" << apuesta << endl;
+                    
+                    // Recibes UNA carta más
+                    cout << "Recibes tu ultima carta: ";
+                    int nuevaCarta = obtenerCarta();
+                    if (nuevaCarta == 11) asesJugador++;
+                    puntajeJugador += nuevaCarta;
+                    
+                    // Ajustamos si te pasaste con esa carta
                     if (puntajeJugador > 21) {
-                        cout << "TE PASASTE DE 21 (Bust)!" << endl;
+                        puntajeJugador = ajustarPorAs(puntajeJugador, asesJugador);
+                    }
+                    cout << "\nPuntaje final: " << puntajeJugador << endl;
+
+                    // Si te pasaste, perdiste
+                    if (puntajeJugador > 21) {
+                        cout << "TE PASASTE (Bust)!" << endl;
                         jugadorSePaso = true;
                     }
+
+                    break; // IMPORTANTE: El turno termina inmediatamente después de doblar
+                } else {
+                    cout << "No puedes doblar ahora (no es tu primer turno o no tienes saldo)." << endl;
+                    // El bucle continúa para que elija otra opción válida
                 }
+
+            } else if (decision == 'P' || decision == 'p') {
+                // (Tu lógica de PEDIR va aquí, igual que antes)
+                // ...
+                // ...
+                
+                // IMPORTANTE: Si pide carta, ya no es su primer turno
+                esPrimerTurno = false; 
+
             } else if (decision == 'T' || decision == 't') {
-                // Plantarse
+                // (Tu lógica de PLANTARSE va aquí, igual que antes)
                 cout << "Te plantas con " << puntajeJugador << endl;
-                break; // Sale del bucle del turno del jugador
+                break;
             }
         }
 
